@@ -1,0 +1,27 @@
+{
+  "name": "react-native-smart-sortable-sudoku-grid",
+  "version": "1.0.0",
+  "description": "A smart sortable sudoku grid for React Native apps",
+  "main": "SortableSudokuGrid.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/react-native-component/react-native-smart-sortable-sudoku-grid.git"
+  },
+  "keywords": [
+    "react-native",
+    "smart",
+    "sortable",
+    "sudoku",
+    "grid",
+    "component"
+  ],
+  "author": "HISAME SHIZUMARU",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/react-native-component/react-native-smart-sortable-sudoku-grid/issues"
+  },
+  "homepage": "https://github.com/react-native-component/react-native-smart-sortable-sudoku-grid#readme"
+}
