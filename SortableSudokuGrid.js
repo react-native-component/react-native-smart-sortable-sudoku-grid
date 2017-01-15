@@ -27,7 +27,7 @@ import {
     containerLayout,
     containerHeight,
 } from './constants'
-import TimerEnhance from '../react-native-smart-timer-enhance'
+import TimerEnhance from 'react-native-smart-timer-enhance'
 
 const { width: deviceWidth } = Dimensions.get('window');
 const styles = StyleSheet.create({
