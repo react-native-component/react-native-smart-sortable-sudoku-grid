@@ -25,8 +25,19 @@ see [ReactNativeComponentDemos][0]
 
 ## Usage
 
-Install the SortableSudokuGrid from npm with `npm install react-native-smart-sortable-sudoku-grid --save`.
-Then, require it from your app's JavaScript files with `import SudokuGrid from 'react-native-smart-sortable-sudoku-grid'`.
+Install the SortableSudokuGrid package from npm with:
+
+```bash
+$ npm install react-native-smart-sortable-sudoku-grid --save
+```
+
+Then, require it from your app's JavaScript files with:
+
+```javascript
+import SortableSudokuGrid from 'react-native-smart-sortable-sudoku-grid';
+```
+
+Complete Example:
 
 ```js
 import React, {
