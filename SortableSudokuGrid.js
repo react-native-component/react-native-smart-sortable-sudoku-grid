@@ -134,12 +134,18 @@ class SortableSudokuGrid extends Component {
     }
 
     componentWillReceiveProps (nextProps) {
-        let sortable = nextProps.sortable
-        if (sortable !== this.props.sortable) {
-            this.setState({
-                sortable,
-            })
+        let { sortable, dataSource, } = nextProps
+        let { sortable: lastSortable,  dataSource: lastDataSource, } = this.props
+        let newState
+        if (sortable !== lastSortable) {
+            !newState && (newState = {})
+            newState.sortable = sortable
         }
+        if (dataSource !== lastDataSource) {
+            !newState && (newState = {})
+            newState.dataSource = dataSource
+        }
+        newState && this.setState(newState)
     }
 
     componentWillUnmount () {
@@ -205,7 +211,7 @@ class SortableSudokuGrid extends Component {
     _onTouchStart = (e, gestureState) => {
         //console.log(`_onTouchStart... this._touchDown = ${this._touchDown}`)
         //compare this._touchDown to fix unexcepted _onTouchStart trigger in specified cases
-        if (this._touchDown || !this.state.sortable ) {
+        if (this._touchDown || !this.state.sortable) {
             return
         }
         //console.log(`_onTouchStart not return...`)
@@ -312,7 +318,7 @@ class SortableSudokuGrid extends Component {
             animationType,
             coordinate,
             callback: () => {
-                if(!this._currentDraggingComponent) {
+                if (!this._currentDraggingComponent) {
                     return
                 }
                 this._currentDraggingComponent.setZIndex(0)
@@ -378,7 +384,7 @@ class SortableSudokuGrid extends Component {
     }
 
     addCell = ({ data, callback, }) => {
-        if(this._touchEnding) {
+        if (this._touchEnding) {
             return
         }
         //if (this._isAdding) {
