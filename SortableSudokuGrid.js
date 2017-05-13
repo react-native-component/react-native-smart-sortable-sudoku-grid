@@ -94,14 +94,9 @@ class SortableSudokuGrid extends Component {
                 //for android, fix the weird conflict between PanRespander and ScrollView
                 return this.state.sortable
             },
-            onMoveShouldSetPanResponder: (e, gestureState) => {
+            onMoveShouldSetPanResponder: (e, {dx, dy}) => {
                 //for ios/android, fix the conflict between PanRespander and TouchableView
-                var x = gestureState.dx;
-                var y = gestureState.dy;
-                if (x != 0 && y != 0) {
-                    return true;
-                }
-                return false;
+                return this.state.sortable && dx !== 0 && dy !== 0
             },
             onPanResponderGrant: this._onTouchStart,
             onPanResponderMove: this._onTouchMove,
