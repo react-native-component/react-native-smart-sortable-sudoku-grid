@@ -72,6 +72,8 @@ class SortableSudokuGrid extends Component {
 
         this._pageLeft = 0
         this._pageTop = 0
+        this._width = 0
+        this._height = 0
 
         this._container = null
         this._responderTimer = null
@@ -199,6 +201,8 @@ class SortableSudokuGrid extends Component {
                 ////console.log(`ox = ${ox}, oy = ${oy}, px = ${px}, py = ${py}, width = ${width}, height = ${height}`)
                 this._pageTop = py
                 this._pageLeft = px   //sometimes return incorrect value, when using navigator
+                this._width = width
+                this._height = height
             })
         }, delay) //delay for waiting navigator's animation
     }
@@ -255,10 +259,11 @@ class SortableSudokuGrid extends Component {
             x: pageX - this._pageLeft - this._columnWidth / 2,
             y: pageY - this._pageTop - this._rowHeight / 2,
         })
-
+        let fixed_x = Math.min(this._width - 5, Math.max(5, pageX - this._pageLeft));
+        let fixed_y = Math.min(this._height - 5, Math.max(5, pageY - this._pageTop));
         let hoverCell = this._getTouchCell({
-            x: pageX - this._pageLeft,
-            y: pageY - this._pageTop,
+            x: fixed_x,
+            y: fixed_y,
         })
 
         if (hoverCell == null || hoverCell == this._currentStartCell) {
