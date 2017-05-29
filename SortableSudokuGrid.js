@@ -53,8 +53,7 @@ class SortableSudokuGrid extends Component {
         sortable: PropTypes.bool,
     }
 
-    constructor (props) {
-        super(props)
+    createHeight(props){
 
         let { columnCount, dataSource, rowWidth, rowHeight, sortable, } = props
 
@@ -64,10 +63,16 @@ class SortableSudokuGrid extends Component {
 
         let containerHeight = dataSource.length > 0 ? (Math.floor((dataSource.length - 1) / columnCount) + 1 ) * this._rowHeight : this._rowHeight
 
+       return new Animated.Value(containerHeight);
+    }
+    constructor (props) {
+        super(props)
+
+        let { columnCount, dataSource, rowWidth, rowHeight, sortable, } = props
         this.state = {
             dataSource,
             sortable,
-            containerHeight: new Animated.Value(containerHeight),
+            containerHeight: this.createHeight(props),
         }
 
         this._pageLeft = 0
@@ -142,6 +147,7 @@ class SortableSudokuGrid extends Component {
             !newState && (newState = {})
             newState.dataSource = dataSource
         }
+        newState.containerHeight= this.createHeight(nextProps),
         newState && this.setState(newState)
     }
 
