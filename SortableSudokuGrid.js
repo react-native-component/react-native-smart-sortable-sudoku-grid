@@ -147,7 +147,7 @@ class SortableSudokuGrid extends Component {
             !newState && (newState = {})
             newState.dataSource = dataSource
         }
-        newState.containerHeight= this.createHeight(nextProps),
+        newState && (newState.containerHeight= this.createHeight(nextProps)),
         newState && this.setState(newState)
     }
 
