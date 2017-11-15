@@ -51,6 +51,7 @@ class SortableSudokuGrid extends Component {
         dataSource: PropTypes.array.isRequired,
         renderCell: PropTypes.func.isRequired,
         sortable: PropTypes.bool,
+        onResort: PropTypes.func,
     }
 
     createHeight(props){
@@ -535,6 +536,10 @@ class SortableSudokuGrid extends Component {
         this.setState({
             dataSource,
         })
+
+        if (this.props.onResort) {
+            this.props.onResort(dataSource)
+        }
     }
 
     _removeData = (cellIndex) => {
