@@ -66,6 +66,12 @@ export default class SortableCell extends Component {
         )
     }
 
+    componentWillReceiveProps({coordinate: {x, y}}) {
+        if (x !== this.state.coordinate.x._value || y !== this.state.coordinate.y._value) {
+            this.setCoordinate({x, y});
+        }
+    }
+
     componentWillUnmount () {
         this._stopScaleAnmation()
     }

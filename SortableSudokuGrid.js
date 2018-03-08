@@ -54,25 +54,23 @@ class SortableSudokuGrid extends Component {
     }
 
     createHeight(props){
-
-        let { columnCount, dataSource, rowWidth, rowHeight, sortable, } = props
-
+        const { columnCount, rowHeight, sortable, rowWidth } = props
+        const { dataSource } = this.state || props;
         this._rowWidth = rowWidth || deviceWidth
         this._columnWidth = this._rowWidth / columnCount
         this._rowHeight = rowHeight || this._columnWidth
 
         let containerHeight = dataSource.length > 0 ? (Math.floor((dataSource.length - 1) / columnCount) + 1 ) * this._rowHeight : this._rowHeight
-
-       return new Animated.Value(containerHeight);
+        return new Animated.Value(containerHeight);
     }
+
     constructor (props) {
         super(props)
 
-        let { columnCount, dataSource, rowWidth, rowHeight, sortable, } = props
+        let {  dataSource, } = props
         this.state = {
-            dataSource,
-            sortable,
             containerHeight: this.createHeight(props),
+            dataSource,
         }
 
         this._pageLeft = 0
@@ -99,11 +97,11 @@ class SortableSudokuGrid extends Component {
         this._panResponder = PanResponder.create({
             onStartShouldSetPanResponder: (e, gestureState) => {
                 //for android, fix the weird conflict between PanRespander and ScrollView
-                return this.state.sortable
+                return this.props.sortable
             },
             onMoveShouldSetPanResponder: (e, {dx, dy}) => {
                 //for ios/android, fix the conflict between PanRespander and TouchableView
-                return this.state.sortable && dx !== 0 && dy !== 0
+                return this.props.sortable && dx !== 0 && dy !== 0
             },
             onPanResponderGrant: this._onTouchStart,
             onPanResponderMove: this._onTouchMove,
@@ -123,7 +121,7 @@ class SortableSudokuGrid extends Component {
         //let containerHeight = (Math.floor(dataSource.length - 1 / columnCount) + 1) * this._rowHeight
         return (
             <Animated.View
-                style={[ this.props.containerStyle, {width: this._rowWidth, height: this.state.containerHeight, flexDirection: 'column', alignItems: 'stretch', justifyContent: 'flex-start', }]}>
+                style={[ this.props.containerStyle, {width: this.props.rowWidth, height: this.state.containerHeight, flexDirection: 'column', alignItems: 'stretch', justifyContent: 'flex-start', }]}>
                 <View
                     style={[styles.container, ]}
                     ref={ component => this._container = component }
@@ -136,19 +134,17 @@ class SortableSudokuGrid extends Component {
     }
 
     componentWillReceiveProps (nextProps) {
-        let { sortable, dataSource, } = nextProps
-        let { sortable: lastSortable,  dataSource: lastDataSource, } = this.props
-        let newState
-        if (sortable !== lastSortable) {
-            !newState && (newState = {})
-            newState.sortable = sortable
-        }
+        let { sortable, dataSource, rowWidth } = nextProps
+        let { sortable: lastSortable,  dataSource: lastDataSource, rowWidth: lastRowWidth } = this.props
+        let newState = {};
+        let containerHeight;
         if (dataSource !== lastDataSource) {
-            !newState && (newState = {})
             newState.dataSource = dataSource
         }
-        newState.containerHeight= this.createHeight(nextProps),
-        newState && this.setState(newState)
+        if (rowWidth !== lastRowWidth || sortable !== lastSortable) {
+            newState.containerHeight = this.createHeight(nextProps)
+        }
+        Object.keys(newState).length && this.setState(newState)
     }
 
     componentWillUnmount () {
@@ -174,7 +170,6 @@ class SortableSudokuGrid extends Component {
                 x: index % columnCount * this._columnWidth,
                 y: Math.floor(index / columnCount) * this._rowHeight,
             }
-            //console.log(`dataSource.map((data, index, dataList) => index = ${index} title = ${data.title}, x=${coordinate.x}, y=${coordinate.y}`)
 
             return (
                 <SortableCell
@@ -195,7 +190,7 @@ class SortableSudokuGrid extends Component {
                     data={data}
                     index={index}
                     dataList={dataList}
-                    sortable={this.state.sortable}/>
+                    sortable={this.props.sortable}/>
             )
         })
     }
@@ -216,7 +211,7 @@ class SortableSudokuGrid extends Component {
     _onTouchStart = (e, gestureState) => {
         //console.log(`_onTouchStart... this._touchDown = ${this._touchDown}`)
         //compare this._touchDown to fix unexcepted _onTouchStart trigger in specified cases
-        if (this._touchDown || !this.state.sortable) {
+        if (this._touchDown || !this.props.sortable) {
             return
         }
         //console.log(`_onTouchStart not return...`)
@@ -236,6 +231,7 @@ class SortableSudokuGrid extends Component {
                 }
                 this._currentStartCell = draggingCell
                 this._currentDraggingComponent = this._currentStartCell.component
+
                 //console.log(`this._cells => `)
                 //console.log(this._cells)
                 //console.log(`_onTouchStart this._currentStartCell.component.props.index = ${this._currentStartCell.component.props.index}`)
@@ -255,7 +251,7 @@ class SortableSudokuGrid extends Component {
     _onTouchMove = (e, gestureState) => {
         //console.log(`_onTouchMove this._touchDown = ${this._touchDown}`)
         //compare this._touchDown to fix unexcepted _onTouchMove trigger in specified cases
-        if (!this._touchDown || !this.state.sortable || !this._currentStartCell || !this._currentDraggingComponent) {
+        if (!this._touchDown || !this.props.sortable || !this._currentStartCell || !this._currentDraggingComponent) {
             return
         }
         let { pageX, pageY, } = e.nativeEvent
@@ -303,7 +299,7 @@ class SortableSudokuGrid extends Component {
         this._responderTimer = null
 
         //compare this._touchEnding to fix unexcepted _onTouchEnd trigger in specified cases
-        if (this._touchEnding || !this.state.sortable || !this._currentStartCell || !this._currentDraggingComponent) {
+        if (this._touchEnding || !this.props.sortable || !this._currentStartCell || !this._currentDraggingComponent) {
             return
         }
 
@@ -361,7 +357,10 @@ class SortableSudokuGrid extends Component {
             let { cellComponent, cellIndex, animationType, } = cellAnimationOption
             let changedIndex = ( animationType == rightTranslation
             || animationType == leftBottomTranslation ) ? 1 : -1
-
+            if (!this._cells[ cellIndex + changedIndex ]) {
+                console.log('Cell not found: index - %s, changedIndex - %s', cellIndex, changedIndex);
+                continue;
+            }
             //console.log(`cellsAnimationOptions.forEach cellIndex = ${cellIndex}, animationType = ${animationType}, changedIndex = ${changedIndex}`)
 
             this._cells[ cellIndex + changedIndex ].component = cellComponent
@@ -511,6 +510,9 @@ class SortableSudokuGrid extends Component {
         //compare and sort dataSource
         let dataSource = []
         for (let cell of this._cells) {
+            if (!cell || !cell.component) {
+                continue;
+            }
             ////console.log(`this._cells.entries()`)
             ////console.log(this._cells.entries())
             ////console.log(`index = ${index}`)
