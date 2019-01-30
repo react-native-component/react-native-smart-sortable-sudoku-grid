@@ -4,10 +4,9 @@
  * Released under the MIT license
  * Copyright (c) 2016 react-native-component <moonsunfall@aliyun.com>
  */
-
+import PropTypes from 'prop-types';
 import React, {
-    PropTypes,
-    Component,
+    Component
 } from 'react'
 import {
     View,
@@ -138,7 +137,7 @@ class SortableSudokuGrid extends Component {
     componentWillReceiveProps (nextProps) {
         let { sortable, dataSource, } = nextProps
         let { sortable: lastSortable,  dataSource: lastDataSource, } = this.props
-        let newState
+        let newState = {}
         if (sortable !== lastSortable) {
             !newState && (newState = {})
             newState.sortable = sortable
